@@ -207,3 +207,19 @@ func (s *UserService) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	logger.Log.Infow("user deleted successfully", "id", id)
 	return nil
 }
+
+// CountUsers counts the total number of users in the system.
+// It returns the count or an error if the operation fails.
+func (s *UserService) CountUsers(ctx context.Context) (int64, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	// Count the total number of users
+	count, err := s.userRepository.Count(ctx)
+	if err != nil {
+		logger.Log.Errorw("failed to count users", "error", err)
+		return 0, errs.NewAppError(500, "failed to count users", err)
+	}
+
+	return count, nil
+}

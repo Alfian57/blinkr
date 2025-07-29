@@ -25,5 +25,15 @@ func RegisterV1Route(router *gin.RouterGroup) {
 		users.GET("/:id", userHandler.GetUserByID)
 		users.PUT("/:id", userHandler.UpdateUser)
 		users.DELETE("/:id", userHandler.DeleteUser)
+		users.GET("/count", userHandler.CountUsers)
 	}
+
+	// GET /admin/url/count
+
+	// GET /admin/click/count
+
+	// GET /admin/banned-domain
+	// POST /admin/banned-domain
+	// PUT /admin/banned-domain/:id
+	// DELETE /admin/banned-domain/:id
 }

@@ -109,3 +109,13 @@ func (h *UserHandler) DeleteUser(ctx *gin.Context) {
 
 	response.WriteMessageResponse(ctx, http.StatusOK, "user successfully deleted")
 }
+
+func (h *UserHandler) CountUsers(ctx *gin.Context) {
+	user, err := h.service.CountUsers(ctx)
+	if err != nil {
+		response.WriteErrorResponse(ctx, err)
+		return
+	}
+
+	response.WriteDataResponse(ctx, http.StatusOK, user)
+}

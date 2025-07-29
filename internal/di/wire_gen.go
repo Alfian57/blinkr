@@ -29,6 +29,21 @@ func InitializeUserHandler() *handler.UserHandler {
 	return userHandler
 }
 
+func InitializeUrlHandler() *handler.UrlHandler {
+	urlRepository := repository.NewUrlRepository()
+	urlService := service.NewUrlService(urlRepository)
+	urlHandler := handler.NewUrlHandler(urlService)
+	return urlHandler
+}
+
+func InitializeUrlVisitorHandler() *handler.UrlVisitorHandler {
+	urlVisitorRepository := repository.NewUrlVisitorRepository()
+	urlRepository := repository.NewUrlRepository()
+	urlVisitorService := service.NewUrlVisitorService(urlVisitorRepository, urlRepository)
+	urlVisitorHandler := handler.NewUrlVisitorHandler(urlVisitorService)
+	return urlVisitorHandler
+}
+
 func InitializeUserService() *service.UserService {
 	userRepository := repository.NewUserRepository()
 	userService := service.NewUserService(userRepository)

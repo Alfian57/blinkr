@@ -10,6 +10,8 @@ func RegisterV1Route(router *gin.RouterGroup) {
 
 	authHandler := di.InitializeAuthHandler()
 	userHandler := di.InitializeUserHandler()
+	urlHandler := di.InitializeUrlHandler()
+	urlVisitorHandler := di.InitializeUrlVisitorHandler()
 
 	router.POST("/login", authHandler.Login)
 	router.POST("/register", authHandler.Register)
@@ -28,9 +30,16 @@ func RegisterV1Route(router *gin.RouterGroup) {
 		users.GET("/count", userHandler.CountUsers)
 	}
 
-	// GET /admin/url/count
+	urls := admin.Group("urls")
+	{
+		urls.GET("/count", urlHandler.Count)
+	}
 
-	// GET /admin/click/count
+	urlsVisitor := admin.Group("urls-visitors")
+	{
+		urlsVisitor.GET("/count", urlVisitorHandler.Count)
+		urlsVisitor.GET(":urlID/count", urlVisitorHandler.CountByID)
+	}
 
 	// GET /admin/banned-domain
 	// POST /admin/banned-domain

@@ -49,7 +49,7 @@ func (s *UserService) GetAllUsers(ctx context.Context, query dto.GetUsersFilter)
 	}
 
 	// Count total users for pagination
-	count, err := s.userRepository.CountWithFilter(ctx, query.Search)
+	count, err := s.userRepository.CountByUsername(ctx, query.Search)
 	if err != nil {
 		logger.Log.Errorw("failed to count users", "error", err)
 		return dto.PaginatedResult[model.User]{}, errs.NewAppError(500, "failed to retrieve users", err)

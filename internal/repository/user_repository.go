@@ -56,7 +56,7 @@ func (r *UserRepository) GetAll(ctx context.Context) ([]model.User, error) {
 }
 
 // CountWithFilter returns the total number of users matching the search criteria
-func (r *UserRepository) CountWithFilter(ctx context.Context, search string) (int64, error) {
+func (r *UserRepository) CountByUsername(ctx context.Context, search string) (int64, error) {
 	var count int64
 
 	query := r.db.WithContext(ctx).Model(&model.User{})

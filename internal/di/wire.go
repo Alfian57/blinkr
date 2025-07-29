@@ -20,6 +20,16 @@ func InitializeUserHandler() *handler.UserHandler {
 	return &handler.UserHandler{}
 }
 
+func InitializeUrlHandler() *handler.UrlHandler {
+	wire.Build(handler.NewUrlHandler, service.NewUrlService, repository.NewUrlRepository)
+	return &handler.UrlHandler{}
+}
+
+func InitializeUrlVisitorHandler() *handler.UrlVisitorHandler {
+	wire.Build(handler.NewUrlVisitorHandler, service.NewUrlVisitorService, repository.NewUrlVisitorRepository, repository.NewUrlRepository)
+	return &handler.UrlVisitorHandler{}
+}
+
 func InitializeUserService() *service.UserService {
 	wire.Build(service.NewUserService, repository.NewUserRepository)
 	return &service.UserService{}

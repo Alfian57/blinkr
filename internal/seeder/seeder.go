@@ -2,7 +2,6 @@ package seeder
 
 import (
 	"context"
-	"time"
 
 	"github.com/Alfian57/belajar-golang/internal/logger"
 )
@@ -12,8 +11,10 @@ type Seeder interface {
 }
 
 type SeederConfig struct {
-	UseFactory bool
-	UserCount  int
+	UseFactory      bool
+	UserCount       int
+	UrlCount        int
+	UrlVisitorCount int
 }
 
 type DatabaseSeeder struct {
@@ -24,6 +25,8 @@ type DatabaseSeeder struct {
 func NewDatabaseSeeder(config SeederConfig) *DatabaseSeeder {
 	seeders := []Seeder{
 		NewUserSeeder(config.UseFactory, config.UserCount),
+		NewUrlSeeder(config.UseFactory, config.UrlCount),
+		NewUrlVisitorSeeder(config.UseFactory, config.UrlVisitorCount),
 		// Add other seeders here as needed
 	}
 
@@ -49,11 +52,4 @@ func (ds *DatabaseSeeder) SeedAll(ctx context.Context) error {
 
 	logger.Log.Info("All database seeding completed successfully!")
 	return nil
-}
-
-func (ds *DatabaseSeeder) SeedWithTimeout() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	return ds.SeedAll(ctx)
 }

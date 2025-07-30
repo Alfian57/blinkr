@@ -2,27 +2,27 @@ package seeder
 
 import (
 	"context"
+	"errors"
 
-	"github.com/Alfian57/belajar-golang/internal/constants"
-	"github.com/Alfian57/belajar-golang/internal/database"
+	errs "github.com/Alfian57/belajar-golang/internal/errors"
 	"github.com/Alfian57/belajar-golang/internal/factory"
 	"github.com/Alfian57/belajar-golang/internal/logger"
 	"github.com/Alfian57/belajar-golang/internal/model"
+	"github.com/Alfian57/belajar-golang/internal/repository"
 	"github.com/google/uuid"
-
-	"gorm.io/gorm"
-	gormLogger "gorm.io/gorm/logger"
 )
 
 type UserSeeder struct {
-	useFactory bool
-	count      int
+	userRepository *repository.UserRepository
+	useFactory     bool
+	count          int
 }
 
 func NewUserSeeder(useFactory bool, count int) *UserSeeder {
 	return &UserSeeder{
-		useFactory: useFactory,
-		count:      count,
+		userRepository: repository.NewUserRepository(),
+		useFactory:     useFactory,
+		count:          count,
 	}
 }
 
@@ -59,6 +59,14 @@ func (s *UserSeeder) seedManual(ctx context.Context) error {
 		},
 	}
 
+	// Set default password for all users
+	for i := range users {
+		if err := users[i].SetHashedPassword("password123"); err != nil {
+			logger.Log.Errorw("Failed to set password for user", "username", users[i].Username, "error", err)
+			return err
+		}
+	}
+
 	return s.createUsers(ctx, users)
 }
 
@@ -68,42 +76,55 @@ func (s *UserSeeder) seedWithFactory(ctx context.Context) error {
 	var users []model.User
 
 	// Create 1 admin user using AdminUserFactory
-	adminUser := factory.AdminUserFactory.MustCreate().(*model.User)
+	adminFactory := factory.NewAdminFactory()
+	adminUser := adminFactory.MustCreate().(*model.User)
 	users = append(users, *adminUser)
 
 	// Create remaining users using regular UserFactory
+	memberFactory := factory.NewMemberFactory()
 	for i := 1; i < s.count; i++ {
-		user := factory.UserFactory.MustCreate().(*model.User)
-		users = append(users, *user)
+		member := memberFactory.MustCreate().(*model.User)
+		users = append(users, *member)
 	}
 
 	return s.createUsers(ctx, users)
 }
 
 func (s *UserSeeder) createUsers(ctx context.Context, users []model.User) error {
-	for i := range users {
-		// Check if user already exists
-		var existingUser model.User
-		err := database.DB.WithContext(ctx).Session(&gorm.Session{Logger: gormLogger.Default.LogMode(gormLogger.Silent)}).
-			Where("email = ? OR username = ?", users[i].Email, users[i].Username).First(&existingUser).Error
+	for _, user := range users {
+		var err error
+
+		// Check if user already exists by username
+		_, err = s.userRepository.GetByUsername(ctx, user.Username)
 		if err == nil {
-			logger.Log.Infof("User %s already exists, skipping...", users[i].Username)
+			// User found, skip creation
+			logger.Log.Infof("User with username %s already exists, skipping...", user.Username)
 			continue
-		}
-
-		if users[i].Password == "" {
-			err = users[i].SetHashedPassword(constants.DefaultPassword)
-			if err != nil {
-				logger.Log.Errorw("Failed to hash password", "user", users[i].Username, "error", err)
-				return err
-			}
-		}
-
-		// Create user
-		if err := database.DB.WithContext(ctx).Create(&users[i]).Error; err != nil {
-			logger.Log.Errorw("Failed to create user", "user", users[i].Username, "error", err)
+		} else if !errors.Is(err, errs.ErrUserNotFound) {
+			// Other error occurred
+			logger.Log.Errorw("Failed to check existing user", "username", user.Username, "error", err)
 			return err
 		}
+
+		// Check if user already exists by email
+		_, err = s.userRepository.GetByEmail(ctx, user.Email)
+		if err == nil {
+			// User found, skip creation
+			logger.Log.Infof("User with email %s already exists, skipping...", user.Email)
+			continue
+		} else if !errors.Is(err, errs.ErrUserNotFound) {
+			// Other error occurred
+			logger.Log.Errorw("Failed to check existing user", "email", user.Email, "error", err)
+			return err
+		}
+
+		// Create user (both username and email are available)
+		if err := s.userRepository.Create(ctx, &user); err != nil {
+			logger.Log.Errorw("Failed to create user", "user", user.Username, "error", err)
+			return err
+		}
+
+		logger.Log.Infof("Successfully created user: %s (%s)", user.Username, user.Email)
 	}
 
 	return nil

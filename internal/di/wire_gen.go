@@ -44,6 +44,13 @@ func InitializeUrlVisitorHandler() *handler.UrlVisitorHandler {
 	return urlVisitorHandler
 }
 
+func InitializeBannedDomainHandler() *handler.BannedDomainHandler {
+	bannedDomainRepository := repository.NewBannedDomainRepository()
+	bannedDomainService := service.NewBannedDomainService(bannedDomainRepository)
+	bannedDomainHandler := handler.NewBannedDomainHandler(bannedDomainService)
+	return bannedDomainHandler
+}
+
 func InitializeUserService() *service.UserService {
 	userRepository := repository.NewUserRepository()
 	userService := service.NewUserService(userRepository)

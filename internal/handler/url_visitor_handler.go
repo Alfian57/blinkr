@@ -18,7 +18,7 @@ func NewUrlVisitorHandler(s *service.UrlVisitorService) *UrlVisitorHandler {
 	}
 }
 
-func (h *UrlVisitorHandler) Count(ctx *gin.Context) {
+func (h *UrlVisitorHandler) CountAllUrlVisitors(ctx *gin.Context) {
 	count, err := h.service.Count(ctx)
 	if err != nil {
 		response.WriteErrorResponse(ctx, err)
@@ -28,7 +28,7 @@ func (h *UrlVisitorHandler) Count(ctx *gin.Context) {
 	response.WriteDataResponse(ctx, http.StatusOK, count)
 }
 
-func (h *UrlVisitorHandler) CountByID(ctx *gin.Context) {
+func (h *UrlVisitorHandler) CountUrlVisitorByID(ctx *gin.Context) {
 	urlIDParam := ctx.Param("urlID")
 
 	count, err := h.service.CountByUrlID(ctx, urlIDParam)

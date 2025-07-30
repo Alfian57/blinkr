@@ -12,6 +12,7 @@ func RegisterV1Route(router *gin.RouterGroup) {
 	userHandler := di.InitializeUserHandler()
 	urlHandler := di.InitializeUrlHandler()
 	urlVisitorHandler := di.InitializeUrlVisitorHandler()
+	bannedDomainHandler := di.InitializeBannedDomainHandler()
 
 	router.POST("/login", authHandler.Login)
 	router.POST("/register", authHandler.Register)
@@ -32,17 +33,20 @@ func RegisterV1Route(router *gin.RouterGroup) {
 
 	urls := admin.Group("urls")
 	{
-		urls.GET("/count", urlHandler.Count)
+		urls.GET("/count", urlHandler.CountAllUrl)
 	}
 
 	urlsVisitor := admin.Group("urls-visitors")
 	{
-		urlsVisitor.GET("/count", urlVisitorHandler.Count)
-		urlsVisitor.GET(":urlID/count", urlVisitorHandler.CountByID)
+		urlsVisitor.GET("/count", urlVisitorHandler.CountAllUrlVisitors)
+		urlsVisitor.GET(":urlID/count", urlVisitorHandler.CountUrlVisitorByID)
 	}
 
-	// GET /admin/banned-domain
-	// POST /admin/banned-domain
-	// PUT /admin/banned-domain/:id
-	// DELETE /admin/banned-domain/:id
+	bannedDomain := admin.Group("banned-domains")
+	{
+		bannedDomain.GET("/", bannedDomainHandler.GetAllBannedDomains)
+		bannedDomain.POST("/", bannedDomainHandler.CreateBannedDomain)
+		bannedDomain.PUT("/:id", bannedDomainHandler.UpdateBannedDomain)
+		bannedDomain.DELETE("/:id", bannedDomainHandler.DeleteBannedDomain)
+	}
 }

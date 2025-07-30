@@ -74,6 +74,8 @@ var (
 
 	ErrUrlNotFound = &AppError{Code: http.StatusNotFound, Message: "url not found"}
 
+	ErrBannedDomainNotFound = &AppError{Code: http.StatusNotFound, Message: "banned domain not found"}
+
 	ErrInternalServer = &AppError{Code: http.StatusInternalServerError, Message: "internal server error"}
 	ErrBadRequest     = &AppError{Code: http.StatusBadRequest, Message: "bad request"}
 	ErrUnauthorized   = &AppError{Code: http.StatusUnauthorized, Message: "unauthorized"}

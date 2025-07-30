@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/Alfian57/belajar-golang/internal/constants"
 	errs "github.com/Alfian57/belajar-golang/internal/errors"
 	"github.com/Alfian57/belajar-golang/internal/factory"
 	"github.com/Alfian57/belajar-golang/internal/logger"
@@ -61,7 +62,7 @@ func (s *UserSeeder) seedManual(ctx context.Context) error {
 
 	// Set default password for all users
 	for i := range users {
-		if err := users[i].SetHashedPassword("password123"); err != nil {
+		if err := users[i].SetHashedPassword(constants.DefaultPassword); err != nil {
 			logger.Log.Errorw("Failed to set password for user", "username", users[i].Username, "error", err)
 			return err
 		}

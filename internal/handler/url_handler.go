@@ -18,7 +18,7 @@ func NewUrlHandler(s *service.UrlService) *UrlHandler {
 	}
 }
 
-func (h *UrlHandler) Count(ctx *gin.Context) {
+func (h *UrlHandler) CountAllUrl(ctx *gin.Context) {
 	count, err := h.service.Count(ctx)
 	if err != nil {
 		response.WriteErrorResponse(ctx, err)

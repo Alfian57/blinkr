@@ -30,6 +30,11 @@ func InitializeUrlVisitorHandler() *handler.UrlVisitorHandler {
 	return &handler.UrlVisitorHandler{}
 }
 
+func InitializeBannedDomainHandler() *handler.BannedDomainHandler {
+	wire.Build(handler.NewBannedDomainHandler, service.NewBannedDomainService, repository.NewBannedDomainRepository)
+	return &handler.BannedDomainHandler{}
+}
+
 func InitializeUserService() *service.UserService {
 	wire.Build(service.NewUserService, repository.NewUserRepository)
 	return &service.UserService{}

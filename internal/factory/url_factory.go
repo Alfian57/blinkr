@@ -19,9 +19,9 @@ func NewUrlFactory(userIDs uuid.UUIDs) *factory.Factory {
 	).SeqInt("ID", func(n int) (any, error) {
 		return uuid.New(), nil
 	}).Attr("ShortUrl", func(args factory.Args) (any, error) {
-		return gofakeit.URL(), nil
+		return gofakeit.Word(), nil
 	}).Attr("LongUrl", func(args factory.Args) (any, error) {
-		return gofakeit.Username(), nil
+		return gofakeit.URL(), nil
 	}).Attr("UserID", func(args factory.Args) (any, error) {
 		return userIDs[gofakeit.Number(0, len(userIDs)-1)], nil
 	}).Attr("ExpiredAt", func(args factory.Args) (any, error) {

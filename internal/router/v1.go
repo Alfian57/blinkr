@@ -28,12 +28,17 @@ func RegisterV1Route(router *gin.RouterGroup) {
 		users.GET("/:id", userHandler.GetUserByID)
 		users.PUT("/:id", userHandler.UpdateUser)
 		users.DELETE("/:id", userHandler.DeleteUser)
-		users.GET("/count", userHandler.CountUsers)
+		users.GET("/count", userHandler.CountAllUsers)
 		users.POST("/:id/banned", userHandler.BannedUser)
 	}
 
 	urls := admin.Group("urls")
 	{
+		urls.GET("/", urlHandler.GetAllUrls)
+		urls.POST("/", urlHandler.CreateUrl)
+		urls.GET("/:id", urlHandler.GetUrlByID)
+		urls.PUT("/:id", urlHandler.UpdateUrl)
+		urls.DELETE("/:id", urlHandler.DeleteUrl)
 		urls.GET("/count", urlHandler.CountAllUrl)
 	}
 
@@ -50,4 +55,6 @@ func RegisterV1Route(router *gin.RouterGroup) {
 		bannedDomain.PUT("/:id", bannedDomainHandler.UpdateBannedDomain)
 		bannedDomain.DELETE("/:id", bannedDomainHandler.DeleteBannedDomain)
 	}
+
+	// *
 }

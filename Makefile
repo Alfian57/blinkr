@@ -33,7 +33,7 @@ seed-factory:
 	go run ./cmd/seeder -factory
 
 seed-factory-custom:
-	go run ./cmd/seeder -factory -users=50 -urls=50 url-visitors=50
+	go run ./cmd/seeder -factory -users=50 -urls=50 -url-visitors=50
 
 seed-build:
 	go build -o ./build/seeder ./cmd/seeder

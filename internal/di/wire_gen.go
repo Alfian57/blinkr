@@ -31,7 +31,8 @@ func InitializeUserHandler() *handler.UserHandler {
 
 func InitializeUrlHandler() *handler.UrlHandler {
 	urlRepository := repository.NewUrlRepository()
-	urlService := service.NewUrlService(urlRepository)
+	userRepository := repository.NewUserRepository()
+	urlService := service.NewUrlService(urlRepository, userRepository)
 	urlHandler := handler.NewUrlHandler(urlService)
 	return urlHandler
 }

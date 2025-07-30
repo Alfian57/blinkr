@@ -29,6 +29,7 @@ func RegisterV1Route(router *gin.RouterGroup) {
 		users.PUT("/:id", userHandler.UpdateUser)
 		users.DELETE("/:id", userHandler.DeleteUser)
 		users.GET("/count", userHandler.CountUsers)
+		users.POST("/:id/banned", userHandler.BannedUser)
 	}
 
 	urls := admin.Group("urls")

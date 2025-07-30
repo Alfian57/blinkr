@@ -47,6 +47,11 @@ func (s *AuthService) Login(ctx context.Context, req dto.LoginRequest) (dto.Cred
 		return credentials, errs.NewAppError(http.StatusUnauthorized, "username or password is incorrect", err)
 	}
 
+	// Chehck banned status
+	if user.IsBanned {
+		return credentials, errs.NewAppError(http.StatusForbidden, "user is banned", nil)
+	}
+
 	// Create access token
 	accessToken, err := jwt.CreateAccessToken(user)
 	if err != nil {

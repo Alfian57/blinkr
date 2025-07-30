@@ -177,6 +177,7 @@ func (s *UserService) UpdateUser(ctx context.Context, request dto.UpdateUserRequ
 		ID:       request.ID,
 		Email:    request.Email,
 		Username: request.Username,
+		IsBanned: existingUser.IsBanned,
 	}
 
 	// Update user password if provided
@@ -222,4 +223,32 @@ func (s *UserService) CountUsers(ctx context.Context) (int64, error) {
 	}
 
 	return count, nil
+}
+
+func (s *UserService) BannedUser(ctx context.Context, id uuid.UUID) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	// Validate user existence
+	currentUser, err := s.userRepository.GetByID(ctx, id.String())
+	if err != nil {
+		if err == errs.ErrUserNotFound {
+			return err
+		}
+
+		logger.Log.Errorw("failed to check user existence for banned", "id", id, "error", err)
+		return errs.NewAppError(500, "failed to validate user", err)
+	}
+
+	// Prepare user data for update
+	currentUser.IsBanned = true
+
+	// Update user
+	if err := s.userRepository.Update(ctx, &currentUser); err != nil {
+		logger.Log.Errorw("failed to banned user", "id", id, "error", err)
+		return errs.NewAppError(500, "failed to update user", err)
+	}
+
+	logger.Log.Infow("user banned successfully", "id", id)
+	return nil
 }

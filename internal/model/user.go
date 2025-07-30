@@ -20,6 +20,7 @@ type User struct {
 	Role      string    `json:"role" gorm:"not null"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	IsBanned  bool      `json:"is_banned" gorm:"default:false"`
 }
 
 func (User) TableName() string {

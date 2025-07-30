@@ -132,7 +132,7 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) (mo
 }
 
 func (r *UserRepository) Update(ctx context.Context, user *model.User) error {
-	err := r.db.WithContext(ctx).Model(user).Select("email", "username").Updates(user).Error
+	err := r.db.WithContext(ctx).Model(user).Select("email", "username", "is_banned").Updates(user).Error
 	return err
 }
 

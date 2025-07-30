@@ -119,3 +119,18 @@ func (h *UserHandler) CountUsers(ctx *gin.Context) {
 
 	response.WriteDataResponse(ctx, http.StatusOK, user)
 }
+
+func (h *UserHandler) BannedUser(ctx *gin.Context) {
+	id, err := uuid.Parse(ctx.Param("id"))
+	if err != nil {
+		response.WriteErrorResponse(ctx, err)
+		return
+	}
+
+	if err := h.service.BannedUser(ctx, id); err != nil {
+		response.WriteErrorResponse(ctx, err)
+		return
+	}
+
+	response.WriteMessageResponse(ctx, http.StatusOK, "user successfully banned")
+}

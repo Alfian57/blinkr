@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Alfian57/belajar-golang/internal/config"
+	"github.com/Alfian57/belajar-golang/internal/cron"
 	"github.com/Alfian57/belajar-golang/internal/database"
 	"github.com/Alfian57/belajar-golang/internal/logger"
 	"github.com/Alfian57/belajar-golang/internal/middleware"
@@ -31,6 +32,7 @@ func main() {
 	logger.Init()
 	database.Init(cfg.Database)
 	validation.Init()
+	cron.Init()
 
 	if err := os.MkdirAll("logs", 0755); err != nil {
 		panic(fmt.Sprintf("Failed to create logs directory: %v", err))

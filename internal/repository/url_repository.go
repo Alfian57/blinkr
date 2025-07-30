@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/Alfian57/belajar-golang/internal/database"
 	errs "github.com/Alfian57/belajar-golang/internal/errors"
@@ -97,6 +98,20 @@ func (r *UrlRepository) GetByID(ctx context.Context, id string) (model.Url, erro
 	}
 
 	return url, nil
+}
+
+func (r *UrlRepository) GetByExpiredMoreThan(ctx context.Context, expiredTime time.Time) ([]model.Url, error) {
+	var urls []model.Url
+
+	err := r.db.WithContext(ctx).Where("expired_at > ?", expiredTime).Find(&urls).Error
+	if err != nil {
+		return nil, err
+	}
+	if len(urls) == 0 {
+		return nil, errs.ErrUrlNotFound
+	}
+
+	return urls, nil
 }
 
 func (r *UrlRepository) Update(ctx context.Context, url *model.Url) error {
